@@ -35,6 +35,14 @@ class Profile(BaseModel):
     color: Optional[str] = None
 
 
+@app.get("/profile") 
+async def get_profile():
+    profiles = await db["profiles"].find().to_list(999)
+    return TypeAdapter(List[Profile]).validate_python(profiles)
+
+
+
+
 @app.get("/tank")
 async def get_tanks():
     tanks = await db["tanks"].find().to_list(999)
