@@ -27,25 +27,30 @@ class Tank(BaseModel):
     lat: Optional[float] = None
     long: Optional[float] = None 
 
-
+class Profile(BaseModel): 
+    id: Optional[PyObjectId] = Field(alias = "_id", default = None)
+    last_updated: Optional[str] = None
+    username: Optional[str] = None
+    role: Optional[str] = None
+    color: Optional[str] = None
 
 
 @app.get("/tank")
 async def get_tanks():
-    tanks = await db["tanks4"].find().to_list(999)
+    tanks = await db["tanks"].find().to_list(999)
     return TypeAdapter(List[Tank]).validate_python(tanks)
 
 @app.get("/tank/{id}")
 async def get_tank(id: str):
-    tank = await db["tanks4"].find_one({"_id": ObjectId(id)})
+    tank = await db["tanks"].find_one({"_id": ObjectId(id)})
     if tank is None:
         raise HTTPException(status_code = 404, detail = "Tank of id: " + id + " not found.")
     return Tank(**tank)
 
 @app.post("/tank", status_code=201)
 async def create_tank(tank: Tank):
-    new_tank = await db["tanks4"].insert_one(tank.model_dump())
-    created_tank = await db["tanks4"].find_one({"_id": new_tank.inserted_id})
+    new_tank = await db["tanks"].insert_one(tank.model_dump())
+    created_tank = await db["tanks"].find_one({"_id": new_tank.inserted_id})
 
     await update_profile()
 
@@ -53,14 +58,14 @@ async def create_tank(tank: Tank):
 
 @app.patch("/tank/{id}")
 async def update_tank(id: str, tank_update: Tank):
-    updated_tank = await db["tanks4"].update_one(
+    updated_tank = await db["tanks"].update_one(
         {"_id": ObjectId(id)},
         {"$set": tank_update.model_dump(exclude_unset=True)},
     )
     await update_profile()
 
     if updated_tank.modified_count > 0:
-        patched_tank = await db["tanks4"].find_one(
+        patched_tank = await db["tanks"].find_one(
             {"_id": ObjectId(id)}
         )
         
@@ -70,7 +75,7 @@ async def update_tank(id: str, tank_update: Tank):
 
 @app.delete("/tank/{id}")
 async def delete_tank(id: str):
-    deleted_tank = await db["tanks4"].delete_one({"_id": ObjectId(id)})
+    deleted_tank = await db["tanks"].delete_one({"_id": ObjectId(id)})
     await update_profile()
 
     if deleted_tank.deleted_count < 1:
