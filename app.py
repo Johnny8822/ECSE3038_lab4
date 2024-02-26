@@ -35,6 +35,8 @@ class Profile(BaseModel):
     color: Optional[str] = None
 
 
+
+
 async def change_profile(): 
     present = datetime.now().strftime("%d/%m/%Y, %I:%M:%S %p") 
     user_profile = await db["profiles"].find().to_list(1) 
@@ -56,8 +58,18 @@ async def get_profile():
 @app.post("/profile", status_code=201)
 async def create_profile(profile: Profile):  
    checking_profile = await db["profiles"].find().to_list(1)  
+   
    if len(checking_profile) == 0:
-        current_time = datetime.now().strftime("%d/%m/%Y, %I:%M:%S %p")
+        current_time = datetime.now().strftime("%d/%m/%Y, %I:%M:%S %p") 
+
+        user_profile = profile.model_dump()
+        user_profile["last_updated"] = current_time
+        new_user = await db["profiles"].insert_one(user_profile)
+
+        created_user = await db["profiles"].find_one({"_id": new_user.inserted_id})
+        return Profile(**created_user)
+    
+raise HTTPException(status_code = 400, detail = "Unable to create more than 1 profile")    
         
    
   
@@ -100,7 +112,7 @@ async def update_tank(id: str, tank_update: Tank):
         {"_id": ObjectId(id)},
         {"$set": tank_update.model_dump(exclude_unset=True)},
     )
-    await change_profile_profile()
+    await change_profile()
 
     if updated_tank.modified_count > 0:
         patched_tank = await db["tanks"].find_one(
