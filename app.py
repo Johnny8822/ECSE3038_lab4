@@ -35,6 +35,11 @@ class Profile(BaseModel):
     color: Optional[str] = None
 
 
+async def change_profile():
+
+
+
+
 @app.get("/profile") 
 async def get_profile():
     profiles = await db["profiles"].find().to_list(1)
@@ -77,7 +82,7 @@ async def create_tank(tank: Tank):
     new_tank = await db["tanks"].insert_one(tank.model_dump())
     created_tank = await db["tanks"].find_one({"_id": new_tank.inserted_id})
 
-    await update_profile()
+    await change_profile()
 
     return Tank(**created_tank)
 
@@ -89,7 +94,7 @@ async def update_tank(id: str, tank_update: Tank):
         {"_id": ObjectId(id)},
         {"$set": tank_update.model_dump(exclude_unset=True)},
     )
-    await update_profile()
+    await change_profile_profile()
 
     if updated_tank.modified_count > 0:
         patched_tank = await db["tanks"].find_one(
@@ -105,7 +110,7 @@ async def update_tank(id: str, tank_update: Tank):
 @app.delete("/tank/{id}")
 async def delete_tank(id: str):
     deleted_tank = await db["tanks"].delete_one({"_id": ObjectId(id)})
-    await update_profile()
+    await change_profile()
 
     if deleted_tank.deleted_count < 1:
         raise HTTPException(status_code = 404, detail = "Tank of id: " + id + " not found.")
