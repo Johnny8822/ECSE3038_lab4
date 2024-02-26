@@ -42,11 +42,19 @@ async def get_profile():
 
 
 
+@app.post("/profile", status_code=201)
+async def create_profile(profile: Profile): 
+    
+
+
 
 @app.get("/tank")
 async def get_tanks():
     tanks = await db["tanks"].find().to_list(999)
     return TypeAdapter(List[Tank]).validate_python(tanks)
+
+
+
 
 @app.get("/tank/{id}")
 async def get_tank(id: str):
@@ -54,6 +62,10 @@ async def get_tank(id: str):
     if tank is None:
         raise HTTPException(status_code = 404, detail = "Tank of id: " + id + " not found.")
     return Tank(**tank)
+
+
+
+
 
 @app.post("/tank", status_code=201)
 async def create_tank(tank: Tank):
@@ -63,6 +75,8 @@ async def create_tank(tank: Tank):
     await update_profile()
 
     return Tank(**created_tank)
+
+
 
 @app.patch("/tank/{id}")
 async def update_tank(id: str, tank_update: Tank):
@@ -80,6 +94,8 @@ async def update_tank(id: str, tank_update: Tank):
         return Tank(**patched_tank)
     
     raise HTTPException(status_code = 404, detail = "Tank of id: " + id + " not found.")
+
+
 
 @app.delete("/tank/{id}")
 async def delete_tank(id: str):
