@@ -36,4 +36,11 @@ The route should also return status code that indicates that an object was **suc
 
 **DELETE /tank/{id}**
 
-Your web application should allow the client to delete any previously POSTed object. The web application should not send back any message to the client once the objects has been deleted. There should, however, be a suitable status code that indicates **success** and that an **empty response is expected**.
+Your web application should allow the client to delete any previously POSTed object. The web application should not send back any message to the client once the objects has been deleted. There should, however, be a suitable status code that indicates **success** and that an **empty response is expected**. 
+
+
+
+Purpose of Code: We all know by this point how this goes 
+
+
+Would you rather go on a double date with your ex or clog the toilet on a first date?? (I would personally not do either)
