@@ -69,7 +69,7 @@ async def create_profile(profile: Profile):
         created_user = await db["profiles"].find_one({"_id": new_user.inserted_id})
         return Profile(**created_user)
     
-raise HTTPException(status_code = 400, detail = "Unable to create more than 1 profile")    
+raise HTTPException(status_code = 400, detail = "Only One Profile Can Be Created")    
         
    
   
