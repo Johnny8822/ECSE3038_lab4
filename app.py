@@ -35,7 +35,13 @@ class Profile(BaseModel):
     color: Optional[str] = None
 
 
-async def change_profile():
+async def change_profile(): 
+    present = datetime.now().strftime("%d/%m/%Y, %I:%M:%S %p") 
+    user_profile = await db["profiles"].find().to_list(1) 
+    db["profiles"].update_one(
+        {"_id": user_profile[0]["_id"]},
+        {"$set": {"last_updated": present}},
+    )
 
 
 
