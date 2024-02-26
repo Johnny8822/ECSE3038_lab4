@@ -37,14 +37,19 @@ class Profile(BaseModel):
 
 @app.get("/profile") 
 async def get_profile():
-    profiles = await db["profiles"].find().to_list(999)
+    profiles = await db["profiles"].find().to_list(1)
     return TypeAdapter(List[Profile]).validate_python(profiles)
 
 
 
 @app.post("/profile", status_code=201)
-async def create_profile(profile: Profile): 
-    
+async def create_profile(profile: Profile):  
+   checking_profile = await db["profiles"].find().to_list(1)  
+   if len(checking_profile) == 0:
+        current_time = datetime.now().strftime("%d/%m/%Y, %I:%M:%S %p")
+        
+   
+  
 
 
 
